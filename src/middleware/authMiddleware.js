@@ -1,4 +1,91 @@
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const Role = require('../models/Role'); // ✅ Importación del modelo Role
+const BlacklistedToken = require('../models/BlacklistedToken');
 
+// Middleware para verificar el token de autenticación y la lista negra
+exports.authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Token no proporcionado' });
+  }
+
+  try {
+    const isBlacklisted = await BlacklistedToken.findOne({ token });
+    if (isBlacklisted) {
+      return res.status(403).json({ message: 'Token inválido o expirado' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: 'Token inválido' });
+  }
+};
+
+// Middleware para verificar si el usuario tiene el permiso necesario
+exports.hasPermission = (requiredPermission) => {
+  return async (req, res, next) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'No autenticado' });
+      }
+
+      const user = await User.findById(req.user.id)
+        .populate({
+          path: 'role',
+          populate: {
+            path: 'permissions'
+          }
+        });
+
+      if (!user || !user.role || !user.role.permissions) {
+        return res.status(403).json({ message: 'Permisos no disponibles' });
+      }
+
+      const hasPermission = user.role.permissions.some(
+        (permission) => permission.name === requiredPermission
+      );
+
+      if (!hasPermission) {
+        return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
+      }
+
+      next();
+    } catch (error) {
+      console.error('Error en hasPermission:', error);
+      return res.status(500).json({ message: 'Error al verificar permisos' });
+    }
+  };
+};
+
+// Middleware para manejar el logout
+exports.logout = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.sendStatus(401);
+
+  try {
+    const isBlacklisted = await BlacklistedToken.findOne({ token });
+    if (isBlacklisted) {
+      return res.status(403).json({ message: 'Token inválido o expirado' });
+    }
+
+    await BlacklistedToken.create({ token });
+    res.status(200).json({ message: 'Cierre de sesión exitoso' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al procesar el logout' });
+  }
+};
+
+
+
+/* 
 //Creamos el middleware
 
 const User = require('../models/User');
@@ -88,4 +175,4 @@ exports.authenticateToken = async (req, res, next) => {
       req.user = user;
       next();
     });
-  };
+  }; */
