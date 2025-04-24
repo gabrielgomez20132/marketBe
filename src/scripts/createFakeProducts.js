@@ -1,10 +1,27 @@
 const mongoose = require('mongoose');
-const Product = require('../models/Product'); // Asegúrate de que la ruta sea correcta
 require('dotenv').config();
 const connectDB = require('../config/database');
 
-// Datos falsos para los productos electrónicos
-const fakeProducts = [
+const Product = require('../models/Product');
+const Category = require('../models/Category'); // Asegúrate de tener este modelo
+
+// Datos base para categorías (deben coincidir con los valores que usan los productos)
+const fakeCategories = [
+  { name: 'Smartphones', description: 'Dispositivos móviles inteligentes', image: '', isActive: true },
+  { name: 'Laptops', description: 'Ordenadores portátiles', image: '', isActive: true },
+  { name: 'Smartwatches', description: 'Relojes inteligentes', image: '', isActive: true },
+  { name: 'Tablets', description: 'Dispositivos tipo tablet', image: '', isActive: true },
+  { name: 'Auriculares', description: 'Auriculares y audífonos', image: '', isActive: true },
+  { name: 'Televisores', description: 'Pantallas y televisores', image: '', isActive: true },
+  { name: 'Cámaras', description: 'Cámaras fotográficas y de video', image: '', isActive: true },
+  { name: 'Redes', description: 'Dispositivos de red', image: '', isActive: true },
+  { name: 'Proyectores', description: 'Proyectores multimedia', image: '', isActive: true },
+  { name: 'Altavoces', description: 'Parlantes y altavoces', image: '', isActive: true },
+  { name: 'Monitores', description: 'Pantallas para PC', image: '', isActive: true }
+];
+
+// Productos con nombres de categorías, que luego serán reemplazadas por los ObjectIds reales
+const rawFakeProducts = [
     { name: 'Smartphone Samsung Galaxy S23', description: 'Smartphone de última generación con cámara de 108 MP', price: 999, stock: 100, category: 'Smartphones', image: 'https://example.com/samsung-galaxy-s23.jpg', brand: 'Samsung', isActive: true, rating: 4.5, sku: 'SKU1001' },
     { name: 'Laptop Dell XPS 13', description: 'Laptop ultradelgada con procesador i7 y pantalla 4K', price: 1500, stock: 50, category: 'Laptops', image: 'https://example.com/dell-xps-13.jpg', brand: 'Dell', isActive: true, rating: 4.7, sku: 'SKU1002' },
     { name: 'Smartwatch Apple Watch Series 8', description: 'Reloj inteligente con funciones de salud y monitorización', price: 400, stock: 200, category: 'Smartwatches', image: 'https://example.com/apple-watch-series-8.jpg', brand: 'Apple', isActive: true, rating: 4.6, sku: 'SKU1003' },
@@ -28,22 +45,36 @@ const fakeProducts = [
 ];
 
 async function loadFakeProducts() {
-    try {
-        await connectDB();
-        console.log('Conectado a MongoDB');
+  try {
+    await connectDB();
+    console.log('✅ Conectado a MongoDB');
 
-        // Limpiar la colección de productos existentes
-        await Product.deleteMany({});
-        console.log('Colección de productos limpiada');
+    // Limpiar colecciones
+    await Product.deleteMany({});
+    await Category.deleteMany({});
+    console.log('🧹 Colecciones de productos y categorías limpiadas');
 
-        // Insertar los productos falsos
-        await Product.insertMany(fakeProducts);
-        console.log('Productos cargados exitosamente');
-    } catch (error) {
-        console.error('Error al cargar productos:', error);
-    } finally {
-        await mongoose.disconnect();
-    }
+    // Insertar categorías
+    const insertedCategories = await Category.insertMany(fakeCategories);
+    const categoryMap = {};
+    insertedCategories.forEach(cat => categoryMap[cat.name.toLowerCase()] = cat._id);
+
+    // Asignar ID de categoría a cada producto
+    const productsWithCategoryIds = rawFakeProducts.map(prod => ({
+      ...prod,
+      category: categoryMap[prod.category.toLowerCase()]
+    }));
+
+    // Insertar productos
+    await Product.insertMany(productsWithCategoryIds);
+    console.log('🎉 Productos y categorías cargados exitosamente');
+
+  } catch (error) {
+    console.error('❌ Error al cargar productos y categorías:', error);
+  } finally {
+    await mongoose.disconnect();
+    console.log('🔌 Desconectado de MongoDB');
+  }
 }
 
 loadFakeProducts();

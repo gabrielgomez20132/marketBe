@@ -1,12 +1,20 @@
 const productService = require('../services/productService');
+const paginate = require('../helpers/pagination');
+const { sendResponse, handleMongooseError } = require('../helpers/responseHelper');
 
-// Obtener todos los productos
+// Obtener todos los productos con paginación
 const getProducts = async (req, res) => {
     try {
-        const products = await productService.getProducts();
-        res.json(products);
+        const paginatedResult = await paginate(
+            req,
+            productService.getProducts,        // Función para obtener productos paginados
+            productService.countProducts       // Función para contar productos totales
+        );
+
+        sendResponse(res, 200, 'Productos obtenidos correctamente', paginatedResult);
     } catch (error) {
-        res.status(500).json({ message: 'Error al obtener productos', error: error.message });
+        const err = handleMongooseError(error);
+        sendResponse(res, err.status, err.message, err.data);
     }
 };
 
@@ -14,9 +22,10 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
     try {
         const product = await productService.getProductById(req.params.id);
-        res.json(product);
+        sendResponse(res, 200, 'Producto obtenido correctamente', product);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        const err = handleMongooseError(error);
+        sendResponse(res, err.status, err.message, err.data);
     }
 };
 
@@ -24,9 +33,10 @@ const getProductById = async (req, res) => {
 const createProduct = async (req, res) => {
     try {
         const product = await productService.createProduct(req.body);
-        res.status(201).json(product);
+        sendResponse(res, 201, 'Producto creado correctamente', product);
     } catch (error) {
-        res.status(500).json({ message: 'Error al crear producto', error: error.message });
+        const err = handleMongooseError(error);
+        sendResponse(res, err.status, err.message, err.data);
     }
 };
 
@@ -34,9 +44,10 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const updatedProduct = await productService.updateProduct(req.params.id, req.body);
-        res.json(updatedProduct);
+        sendResponse(res, 200, 'Producto actualizado correctamente', updatedProduct);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        const err = handleMongooseError(error);
+        sendResponse(res, err.status, err.message, err.data);
     }
 };
 
@@ -44,10 +55,17 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
     try {
         const deletedProduct = await productService.deleteProduct(req.params.id);
-        res.json({ message: 'Producto eliminado', product: deletedProduct });
+        sendResponse(res, 200, 'Producto eliminado correctamente', deletedProduct);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        const err = handleMongooseError(error);
+        sendResponse(res, err.status, err.message, err.data);
     }
 };
 
-module.exports = { getProducts, getProductById, createProduct, updateProduct, deleteProduct };
+module.exports = {
+    getProducts,
+    getProductById,
+    createProduct,
+    updateProduct,
+    deleteProduct
+};

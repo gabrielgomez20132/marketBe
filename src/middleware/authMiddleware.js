@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const Role = require('../models/Role'); // ✅ Importación del modelo Role
+const Role = require('../models/Role');
 const BlacklistedToken = require('../models/BlacklistedToken');
 
 // Middleware para verificar el token de autenticación y la lista negra

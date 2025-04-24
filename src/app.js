@@ -13,6 +13,7 @@ require('./models/Permission');
 require('./models/Role');
 require('./models/User');
 require('./models/Product');
+require('./models/Category');
 const app = express();
 
 // Configuración de CORS más segura y específica

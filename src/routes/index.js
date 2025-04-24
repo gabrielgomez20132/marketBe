@@ -6,14 +6,17 @@ const productRouter = require('./productRouter');
 const roleRouter = require('./roleRouter');
 const authRouter = require('./authRouter');
 const userRouter = require('./userRouter');
+const mlRouter = require('./mlRouter');
 
 
 
 //router.use('/superheros', superheroRouter);
+router.use('/top-products', mlRouter);
 router.use('/users', userRouter);
 router.use('/products', productRouter);
 router.use('/roles', roleRouter);
 router.use('/auth', authRouter);
+
 
 
 module.exports = router;
