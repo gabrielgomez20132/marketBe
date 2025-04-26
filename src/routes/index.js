@@ -7,10 +7,12 @@ const roleRouter = require('./roleRouter');
 const authRouter = require('./authRouter');
 const userRouter = require('./userRouter');
 const mlRouter = require('./mlRouter');
+const categoriesRouter = require('./categoriesRouter')
 
 
 
 //router.use('/superheros', superheroRouter);
+router.use('/categories', categoriesRouter)
 router.use('/top-products', mlRouter);
 router.use('/users', userRouter);
 router.use('/products', productRouter);

@@ -39,10 +39,23 @@ const getProductById = async (id) => {
 // Crear un nuevo producto
 const createProduct = async (productData) => {
     try {
+        //Validar si ya existe un producto con el mismo name
+        const existingProductByName = await Product.findOne({ name: productData.name });
+        if (existingProductByName) {
+            throw new Error(`El nombre del producto "${productData.name}" ya está en uso.`);
+        }
+
+        // Validar si ya existe un producto con el mismo SKU
+        const existingProductBySku = await Product.findOne({ sku: productData.sku });
+        if (existingProductBySku) {
+            throw new Error(`El SKU "${productData.sku}" ya está en uso.`);
+        }
+
         const product = new Product(productData);
         await product.save();
         return product;
     } catch (error) {
+        // Lanza el error para que el frontend lo maneje
         throw new Error('Error al crear producto: ' + error.message);
     }
 };
@@ -50,10 +63,24 @@ const createProduct = async (productData) => {
 // Actualizar un producto
 const updateProduct = async (id, productData) => {
     try {
+        // Validar si ya existe un producto con el mismo nombre, pero que no sea el actual producto
+        const existingProductByName = await Product.findOne({ name: productData.name, _id: { $ne: id } });
+        if (existingProductByName) {
+            throw new Error(`El nombre del producto "${productData.name}" ya está en uso.`);
+        }
+
+        // Validar si ya existe un producto con el mismo SKU, pero que no sea el actual producto
+        const existingProductBySku = await Product.findOne({ sku: productData.sku, _id: { $ne: id } });
+        if (existingProductBySku) {
+            throw new Error(`El SKU "${productData.sku}" ya está en uso.`);
+        }
+
+        // Actualizar el producto
         const updatedProduct = await Product.findByIdAndUpdate(id, productData, { new: true });
         if (!updatedProduct) {
             throw new Error('Producto no encontrado');
         }
+        
         return updatedProduct;
     } catch (error) {
         throw new Error('Error al actualizar producto: ' + error.message);

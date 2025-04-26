@@ -32,6 +32,7 @@ const getProductById = async (req, res) => {
 // Crear un nuevo producto
 const createProduct = async (req, res) => {
     try {
+        /* console.log(req.body); */
         const product = await productService.createProduct(req.body);
         sendResponse(res, 201, 'Producto creado correctamente', product);
     } catch (error) {
