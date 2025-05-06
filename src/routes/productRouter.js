@@ -10,7 +10,7 @@ const {
 const { authenticateToken, hasPermission } = require('../middleware/authMiddleware');
 
 // Rutas públicas
-router.get('/', /* authenticateToken, hasPermission('read:products'), */ getProducts);
+router.get('/', /* authenticateToken, hasPermission('read:products'), */ getProducts);// Ruta pública con buscador por ?search= y paginación ?page=&limit=
 router.get('/:id', /* authenticateToken, hasPermission('read:products'), */ getProductById);
 
 // Rutas protegidas

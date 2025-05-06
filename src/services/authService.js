@@ -7,15 +7,14 @@ class AuthService {
 
     // Método para registrar un nuevo usuario
     async register(userData) {
-        const existingUser = await User.findOne({ 
-            $or: [
-                { email: userData.email },
-                { username: userData.username }
-            ]
-        });
+        const existingEmail = await User.findOne({ email: userData.email });
+        if (existingEmail) {
+            throw new Error('El email ya está registrado');
+        }
 
-        if (existingUser) {
-            throw new Error('Usuario o email ya existe');
+        const existingUsername = await User.findOne({ username: userData.username });
+        if (existingUsername) {
+            throw new Error('El nombre de usuario ya está en uso');
         }
 
         const hashedPassword = await bcrypt.hash(userData.password, 10);

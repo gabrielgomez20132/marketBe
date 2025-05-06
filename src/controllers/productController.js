@@ -2,15 +2,14 @@ const productService = require('../services/productService');
 const paginate = require('../helpers/pagination');
 const { sendResponse, handleMongooseError } = require('../helpers/responseHelper');
 
-// Obtener todos los productos con paginación
+// Obtener todos los productos con paginación y filtrado
 const getProducts = async (req, res) => {
     try {
         const paginatedResult = await paginate(
             req,
-            productService.getProducts,        // Función para obtener productos paginados
-            productService.countProducts       // Función para contar productos totales
+            productService.getProducts, // Pasa los filtros junto con el skip y limit
+            productService.countProducts // Pasa los filtros también aquí
         );
-
         sendResponse(res, 200, 'Productos obtenidos correctamente', paginatedResult);
     } catch (error) {
         const err = handleMongooseError(error);

@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const { sendResponse, handleMongooseError } = require('../helpers/responseHelper');
 
 // Obtener todos los usuarios
 const getAllUsers = async (req, res) => {
@@ -23,6 +24,7 @@ const getUserById = async (req, res) => {
 // Crear un nuevo usuario
 const createUser = async (req, res) => {
     try {
+
         const newUser = await userService.createUser(req.body);
         res.status(201).json(newUser);
     } catch (error) {
@@ -34,9 +36,13 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const updatedUser = await userService.updateUser(req.params.id, req.body);
-        res.status(200).json(updatedUser);
+        if (!updatedUser) {
+            return sendResponse(res, 404, 'Usuario no encontrado');
+        }
+        sendResponse(res, 200, 'Usuario actualizado correctamente', updatedUser);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        const err = handleMongooseError(error);
+        sendResponse(res, err.status, err.message, err.data);
     }
 };
 

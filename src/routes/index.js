@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-//const superheroRouter = require('./superheroRouter');
 const productRouter = require('./productRouter');
 const roleRouter = require('./roleRouter');
 const authRouter = require('./authRouter');
 const userRouter = require('./userRouter');
 const mlRouter = require('./mlRouter');
-const categoriesRouter = require('./categoriesRouter')
+const categoriesRouter = require('./categoriesRouter');
+const orderRouter = require('./orderRouter');
 
 
 
-//router.use('/superheros', superheroRouter);
+router.use('/orders', orderRouter)
 router.use('/categories', categoriesRouter)
 router.use('/top-products', mlRouter);
 router.use('/users', userRouter);

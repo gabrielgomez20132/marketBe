@@ -2,12 +2,26 @@ const Product = require('../models/Product');
 const Category = require('../models/Category');
 
 // Obtener todos los productos con paginación opcional
-const getProducts = async ({ skip = 0, limit = 10 } = {}) => {
+const getProducts = async ({ skip = 0, limit = 10, search = ''} = {}) => {
     try {
+        let query = {};
+
+        if (search) {
+            const regex = new RegExp(search, 'i'); // Insensible a mayúsculas/minúsculas
+            query = {
+                $or: [
+                    { name: { $regex: regex } },
+                    { brand: { $regex: regex } },
+                    { sku: { $regex: regex } }
+                ]
+            };
+        }
+
         const products = await Product.find()
             .populate('category')
             .skip(skip)
             .limit(limit);
+
         return products;
     } catch (error) {
         throw new Error('Error al obtener productos: ' + error.message);
@@ -15,9 +29,24 @@ const getProducts = async ({ skip = 0, limit = 10 } = {}) => {
 };
 
 // Contar productos para paginación
-const countProducts = async () => {
+const countProducts = async (filters) => {
     try {
-        return await Product.countDocuments();
+        let query = {};
+
+        // Si existe un filtro de búsqueda, construimos una consulta de búsqueda
+        if (filters.search) {
+            const regex = new RegExp(filters.search, 'i');
+            query = {
+                $or: [
+                    { name: { $regex: regex } },
+                    { brand: { $regex: regex } },
+                    { sku: { $regex: regex } }
+                ]
+            };
+        }
+
+        // Contamos los documentos que coincidan con la consulta
+        return await Product.countDocuments(query);
     } catch (error) {
         throw new Error('Error al contar productos: ' + error.message);
     }
