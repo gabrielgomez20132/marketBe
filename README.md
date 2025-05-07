@@ -9,6 +9,7 @@ Esta API RESTful desarrollada con Node.js y Express permite gestionar un sistema
 - Registro de usuarios
 - Login con JWT
 - Protección de rutas sensibles
+- Roles y permisos
 
 ### 2. Módulo de ABMC (Alta, Baja, Modificación, Consulta)
 - Visualización de productos con detalles como ID, descripción, precio y stock.
@@ -83,7 +84,7 @@ npm install
 Crear archivo `.env`:
 
 plaintext
-MONGODB_URI=mongodb://localhost:27017/superhero-api
+MONGODB_URI=mongodb://localhost:27017
 PORT=3000
 JWT_SECRET=tu_secreto_jwt_aqui
 
