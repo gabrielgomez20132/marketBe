@@ -8,6 +8,7 @@ const userRouter = require('./userRouter');
 const mlRouter = require('./mlRouter');
 const categoriesRouter = require('./categoriesRouter');
 const orderRouter = require('./orderRouter');
+const permissionRouter = require('./PermissionRouter');
 
 
 
@@ -17,6 +18,7 @@ router.use('/top-products', mlRouter);
 router.use('/users', userRouter);
 router.use('/products', productRouter);
 router.use('/roles', roleRouter);
+router.use('/permissions', permissionRouter);
 router.use('/auth', authRouter);
 
 
