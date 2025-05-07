@@ -1,7 +1,7 @@
-# API RESTful de Superhéroes
+# API RESTful MarketApp ( e-commerce)
 
 ## Descripción
-Esta API RESTful desarrollada con Node.js y Express permite gestionar un sistema de superhéroes y sus creadores. Implementa una arquitectura en capas (controladores, servicios, modelos) con operaciones CRUD completas, autenticación JWT, validación de datos, paginación y un sistema de logging robusto.
+Esta API RESTful desarrollada con Node.js y Express permite gestionar un sistema de superhéroes y sus creadores. Implementa una arquitectura en capas (controladores, servicios, modelos) con operaciones CRUD completas, autenticación JWT, validación de datos, paginación y un sistema de logging robusto.Roles y permisos asociados a dos tipos de usuarios (admin y user)
 
 ## Funcionalidades Principales
 
@@ -11,19 +11,13 @@ Esta API RESTful desarrollada con Node.js y Express permite gestionar un sistema
 - Protección de rutas sensibles
 
 ### 2. Módulo de ABMC (Alta, Baja, Modificación, Consulta)
-- **Superhéroes:**
-  - Creación de superhéroes con poderes
-  - Listado paginado
-  - Búsqueda por ID
-  - Actualización de información
-  - Eliminación
-  - Gestión de poderes
-- **Creadores:**
-  - Registro de creadores
-  - Listado paginado
-  - Búsqueda por ID
-  - Actualización de información
-  - Eliminación
+- Visualización de productos con detalles como ID, descripción, precio y stock.
+- Acciones de gestión de productos como **Editar**, **Eliminar** y **Nuevo** (comentadas para ser implementadas).
+- Autenticación basada en JWT para proteger el acceso a ciertas funciones.
+- Realizar compras con un descuento especifico.
+- Categorias
+- Ordenes de compras(checkout)
+- Api externa de mercadolibre para Top 20 de productos categoria celulares
 
 ### 3. Características Técnicas
 - Arquitectura en capas (Controladores, Servicios, Modelos)
@@ -44,59 +38,17 @@ Esta API RESTful desarrollada con Node.js y Express permite gestionar un sistema
 
 ## Estructura del Proyecto
 
-superhero-api/
-├── src/
-│ ├── controllers/
-│ │ ├── authController.js
-│ │ ├── superheroController.js
-│ │ └── creatorController.js
-│ ├── services/
-│ │ ├── authService.js
-│ │ ├── superheroService.js
-│ │ └── creatorService.js
-│ ├── middleware/
-│ │ ├── authMiddleware.js
-│ │ └── validator.js
-│ ├── models/
-│ │ ├── User.js
-│ │ ├── Superhero.js
-│ │ └── Creator.js
-│ ├── routes/
-│ │ ├── authRouter.js
-│ │ ├── superheroRouter.js
-│ │ └── creatorRouter.js
-│ ├── config/
-│ │ ├── database.js
-│ │ ├── logger.js
-│ └── app.js
-├── logs/
-│ ├── error.log
-│ └── combined.log
-├── .env
-├── package.json
-└── README.md
+marketBe/
+│
+├── controllers/ # Lógica de negocio
+├── models/ # Esquemas de Mongoose
+├── routes/ # Definición de rutas de la API
+├── middleware/ # Middlewares (ej: autenticación)
+├── uploads/ # Imágenes subidas por usuarios
+├── .env # Variables de entorno
+├── app.js # Configuración de Express
+└── server.js # Inicio del servidor
 
-
-
-## Endpoints de la API
-
-### Autenticación
-- `POST /api/auth/register` - Registro de usuario
-- `POST /api/auth/login` - Login de usuario
-
-### Superhéroes
-- `GET /api/superheros` - Listar superhéroes (paginado)
-- `GET /api/superheros/:id` - Obtener superhéroe por ID
-- `POST /api/superheros` - Crear nuevo superhéroe
-- `PUT /api/superheros/:id` - Actualizar superhéroe
-- `DELETE /api/superheros/:id` - Eliminar superhéroe
-
-### Creadores
-- `GET /api/creators` - Listar creadores (paginado)
-- `GET /api/creators/:id` - Obtener creador por ID
-- `POST /api/creators` - Crear nuevo creador
-- `PUT /api/creators/:id` - Actualizar creador
-- `DELETE /api/creators/:id` - Eliminar creador
 
 ## Ejemplos de Uso
 
@@ -106,46 +58,20 @@ bash
 curl -X POST http://localhost:3000/api/auth/register \
 -H "Content-Type: application/json" \
 -d '{
-"email": "usuario@ejemplo.com",
-"password": "contraseña123",
-"name": "Usuario Ejemplo"
+    "username": "adminUser",
+    "email": "admin@example.com",
+    "password": "admin123",
+    "role": "admin"
 }'
 
-
-### Crear un Superhéroe
-
-bash
-curl -X POST http://localhost:3000/api/superheros \
--H "Content-Type: application/json" \
--H "Authorization: Bearer [TU_TOKEN]" \
--d '{
-"name": "Spider-Man",
-"alterEgo": "Peter Parker",
-"powers": ["Agilidad sobrehumana", "Sentido arácnido", "Trepar paredes"],
-"description": "Tu amigable vecino Spider-Man",
-"creator": "id_del_creador"
-}'
-
-### Crear un Creador
-
-bash
-curl -X POST http://localhost:3000/api/creators \
--H "Content-Type: application/json" \
--H "Authorization: Bearer [TU_TOKEN]" \
--d '{
-"name": "Stan Lee",
-"email": "stanlee@marvel.com",
-"company": "Marvel Comics",
-"yearsOfExperience": 50
-}'
 
 ## Configuración del Proyecto
 
 ### 1. Clonar el repositorio
 
-bash
-git clone https://github.com/Esteban705/SuperheroBackUTN-.git
-cd SuperheroBackUTN-
+git clone https://github.com/gabrielgomez20132/marketBe.git
+cd marketBe
+npm install
 
 ### 2. Instalar dependencias
 
@@ -165,14 +91,3 @@ JWT_SECRET=tu_secreto_jwt_aqui
 
 bash
 npm start
-
-## Sistema de Logging
-El proyecto utiliza Winston para el logging, guardando:
-- Errores en `/logs/error.log`
-- Todos los logs en `/logs/combined.log`
-- Logs de operaciones CRUD
-- Logs de autenticación
-- Información de requests y responses
-
-## Contribuidores
-- Ruben Esteban Rodriguez
