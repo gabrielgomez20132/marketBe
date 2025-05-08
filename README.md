@@ -56,13 +56,13 @@ marketBe/
 ### Registro de Usuario
 
 bash
-curl -X POST http://localhost:3000/api/auth/register \
+curl -X POST http://localhost:5000/api/auth/login \
 -H "Content-Type: application/json" \
 -d '{
-    "username": "adminUser",
+    
     "email": "admin@example.com",
     "password": "admin123",
-    "role": "admin"
+   
 }'
 
 
