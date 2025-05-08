@@ -92,3 +92,11 @@ JWT_SECRET=tu_secreto_jwt_aqui
 
 bash
 npm start
+
+
+### 5.URL EN RENDER
+https://marketfe.onrender.com/
+
+### 6.USER ROLE ADMIN
+email: admin@example.com
+password: admin123
