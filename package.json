@@ -10,7 +10,7 @@
     "deploy": "npm run build && node build/app.js"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": "18.x"
   },
   "keywords": [],
   "author": "",
