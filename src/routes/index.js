@@ -8,7 +8,7 @@ const userRouter = require('./userRouter');
 const mlRouter = require('./mlRouter');
 const categoriesRouter = require('./categoriesRouter');
 const orderRouter = require('./orderRouter');
-const permissionRouter = require('./PermissionRouter');
+const permissionRouter = require('./permissionRouter');
 
 
 
